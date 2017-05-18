@@ -6,7 +6,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     dataArticles: [],
-    users: []
+    isLogin: false
   },
   getters: {
     dataArticles(state) {
