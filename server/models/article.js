@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+let Schema = mongoose.Schema
 
-var articleSchema = new Schema({
+let articleSchema = new Schema({
     title: String,
     content: String,
     category: String,
@@ -9,16 +9,15 @@ var articleSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
-    created_at: {
+    updatedAt: {
         type: Date,
-        default: Date.now()
+        default: Date.now
     },
-    updated_at: {
+    createdAt: {
         type: Date,
-        default: Date.now()
+        default: Date.now
     }
-})
+}) // userSchema
 
-var Article = mongoose.model('Article', articleSchema)
-
+let Article = mongoose.model('Article', articleSchema)
 module.exports = Article

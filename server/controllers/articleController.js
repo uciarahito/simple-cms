@@ -1,70 +1,95 @@
-var Article = require('../models/article')
+const Article = require('../models/article')
+var mongo = require('mongodb')
 var methods = {}
+const Helpers = require('../helpers/decodeToken')
 
-methods.getAll = (req, res) => {
-    Article.find({}, (err, records) => {
-        if (err) {
-            res.json(err)
-        }
-        console.log('Ini record dari getAll di controller');
-        console.log(records);
-        res.json(records)
-    })
-}
-
-methods.getById = (req, res) => {
-    Article.findById(req.params.id, (err, record) => {
-        if (err) {
-            res.json(err)
-        }
-        console.log('Ini record dari getById di controller');
-        console.log(record);
-        res.json(records)
-    })
-}
-
-methods.insertOne = (req, res) => {
-    let newaArticle = new Article({
+methods.insertOne = (req, res, next) => {
+    let decoded = Helpers.decodeToken(req.headers.token)
+    let article = new Article({
         title: req.body.title,
         content: req.body.content,
         category: req.body.category,
-        author: req.body.author
+        author: decoded._id
     })
-
-    newaArticle.save((err, record) => {
-        if (err) {
-            res.json({
-                err
-            })
-        }
-        console.log(record);
+    article.save(function(err, record) {
+        if (err) return console.error(err);
         res.json(record)
-    })
-}
+    });
+} // insertOne
 
-methods.updateById = (req, res) => {
-    Article.findByIdAndUpdate(req.params.id, (err, record) => {
-        if (err) {
+methods.getAll = (req, res, next) => {
+    Article.find()
+        .populate("author")
+        .then(records => {
+            res.json(records)
+        })
+        .catch(err => {
             res.json({
-                err
+                err,
+                message: 'Error waktu getAll Article'
             })
-        }
-        console.log('ini record waktu findById update');
-        console.log(record);
-        record.json(record)
-    })
-}
+        })
+} //getAll
 
-methods.deleteById = (req, res) => {
-    Article.findByIdAndRemove(req.params.id, (err, record) => {
-        if (err) {
+methods.getById = (req, res, next) => {
+    Article.findById(req.params.id)
+        .populate('author')
+        .then(record => {
+            res.json(record)
+        })
+        .catch(err => {
             res.json({
-                err
+                err,
+                message: 'Error waktu getById Article'
             })
-        }
-        console.log(record);
-        res.json(record)
-    })
-}
+        })
+} // getById
+
+methods.updateById = (req, res, next) => {
+    let decoded = Helpers.decodeToken(req.headers.token)
+    Article.findById(req.params.id)
+        .then(record => {
+            Article.updateOne({
+                    "_id": new mongo.ObjectID(req.params.id)
+                }, {
+                    $set: {
+                        "title": req.body.title || record.title,
+                        "content": req.body.content || record.content,
+                        "category": req.body.category || record.category,
+                        "author": decoded._id || record.author
+                    }
+                })
+                .then((record) => {
+                    res.json(record)
+                })
+                .catch(err => {
+                    res.json({
+                        err,
+                        message: 'Error waktu update Article'
+                    })
+                })
+        })
+        .catch(err => {
+            res.json({
+                err,
+                message: 'Data tidak ada'
+            })
+        })
+} //updateById
+
+methods.deleteById = (req, res, next) => {
+    Article.deleteOne({
+            "_id": new mongo.ObjectID(req.params.id)
+        })
+        .then((record) => {
+            res.json(record)
+        })
+        .catch(err => {
+            res.json({
+                err,
+                message: 'Error waktu deleteById Article'
+            })
+        })
+} // deleteById
 
 module.exports = methods
