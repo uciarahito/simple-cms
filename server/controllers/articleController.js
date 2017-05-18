@@ -45,6 +45,25 @@ methods.getById = (req, res, next) => {
         })
 } // getById
 
+methods.getByAuthor = (req, res, next) => {
+    let decoded = Helpers.decodeToken(req.headers.token)
+    Article.find({})
+        .populate('author')
+        .then(record => {
+            console.log('Ini record getByAuthor di controller');
+            console.log(record);
+            if (record.author.username == decoded.username) {
+                res.json(record)
+            }
+        })
+        .catch(err => {
+            res.json({
+                err,
+                message: 'Error waktu getByAuthor Article'
+            })
+        })
+} // getById
+
 methods.updateById = (req, res, next) => {
     let decoded = Helpers.decodeToken(req.headers.token)
     Article.findById(req.params.id)

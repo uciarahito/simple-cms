@@ -24,6 +24,7 @@ router.post('/api/signin', passport.authenticate('local', {
 router.post('/api/articles', articleController.insertOne)
 router.get('/api/articles', articleController.getAll)
 router.get('/api/article/:id', articleController.getById)
+router.get('/api/articlebyauthor/:id', articleController.getByAuthor) // still not working
 router.put('/api/article/:id', articleController.updateById)
 router.delete('/api/article/:id', articleController.deleteById)
 

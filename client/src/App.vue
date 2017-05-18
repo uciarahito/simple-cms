@@ -1,18 +1,23 @@
 <template>
   <div id="app">
-    <NavBarApp></NavBarApp>
-    <h1>Test Test</h1>
+    <NavbarApp></NavbarApp>
+    <FormArticleApp></FormArticleApp>
+    <ContentApp></ContentApp>
   </div>
 </template>
 
 <script>
 // import Hello from './components/Hello'
 import NavbarApp from './components/NavbarApp'
+import ContentApp from './components/ContentApp'
+import FormArticleApp from './components/FormArticleApp'
 
 export default {
   name: 'app',
   components: {
-    NavBarApp
+    NavbarApp,
+    ContentApp,
+    FormArticleApp
   }
 }
 </script>
@@ -24,6 +29,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
